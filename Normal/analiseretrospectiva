@@ -1,0 +1,18 @@
+
+analise.restrospectiva <- function(mt, Ct, Rt, at){
+  
+  T <- ncol(mt) -1
+  ms1 <- matrix(0,nrow=n,ncol=T)
+  Rs1 <- array(rep(diag(n),T),dim=c(n,n,T))
+  
+  ms1[,T] <- mt[,T]
+  Rs1[,,T] <- Ct[,,T]
+  
+  for(t in (T-1):1){
+    ms1[,t] <- mt[,t] + Ct[,,t]%*%t(G)%*%solve(Rt[,,t+1])%*%(ms1[,t+1] - at[,t+1])
+    Rs1[,,t] <- Ct[,,t] + Ct[,,t]%*%t(G)%*%solve(Rt[,,t+1])%*%(Rt[,,t+1] - Rs1[,,t+1])%*%t(Ct[,,t]%*%t(G)%*%solve(Rt[,,t+1]))
+  }
+  result <- list(ms1, Rs1)
+  names(result) <- c("ms1", "Rs1")
+  return(result)
+}
